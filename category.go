@@ -3,6 +3,7 @@ package log4go
 import (
 	"errors"
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 	"time"
@@ -272,7 +273,7 @@ func (f *Filter) Info(arg0 interface{}, args ...interface{}) {
 // message is not actually fged, because all formats are processed and all
 // closures are executed to format the error message.
 // See Debug for further explanation of the arguments.
-func (f *Filter) Warn(arg0 interface{}, args ...interface{}) {
+func (f *Filter) Warn(arg0 interface{}, args ...interface{}) error {
 	const (
 		lvl = WARNING
 	)
@@ -289,12 +290,13 @@ func (f *Filter) Warn(arg0 interface{}, args ...interface{}) {
 		msg = fmt.Sprintf(fmt.Sprint(first)+strings.Repeat(" %v", len(args)), args...)
 	}
 	f.intLogf(lvl, msg)
+	return errors.New(msg)
 }
 
 // Error fs a message at the error f level and returns the formatted error,
 // See Warn for an explanation of the performance and Debug for an explanation
 // of the parameters.
-func (f *Filter) Error(arg0 interface{}, args ...interface{}) {
+func (f *Filter) Error(arg0 interface{}, args ...interface{}) error {
 	const (
 		lvl = ERROR
 	)
@@ -311,6 +313,7 @@ func (f *Filter) Error(arg0 interface{}, args ...interface{}) {
 		msg = fmt.Sprintf(fmt.Sprint(first)+strings.Repeat(" %v", len(args)), args...)
 	}
 	f.intLogf(lvl, msg)
+	return errors.New(msg)
 }
 
 // Critical fs a message at the critical f level and returns the formatted error,
@@ -334,4 +337,16 @@ func (f *Filter) Critical(arg0 interface{}, args ...interface{}) error {
 	}
 	f.intLogf(lvl, msg)
 	return errors.New(msg)
+}
+
+func (f *Filter) Crash(args ...interface{}) {
+	f.Critical(args[0], args[1:]...)
+	f.Close()
+	panic(args)
+}
+
+func (f *Filter) Exit(args ...interface{}) {
+	f.Critical(args[0], args[1:]...)
+	f.Close()
+	os.Exit(0)
 }
