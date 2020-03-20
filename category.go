@@ -1,6 +1,7 @@
 package log4go
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"strings"
@@ -315,7 +316,7 @@ func (f *Filter) Error(arg0 interface{}, args ...interface{}) {
 // Critical fs a message at the critical f level and returns the formatted error,
 // See Warn for an explanation of the performance and Debug for an explanation
 // of the parameters.
-func (f *Filter) Critical(arg0 interface{}, args ...interface{}) {
+func (f *Filter) Critical(arg0 interface{}, args ...interface{}) error {
 	const (
 		lvl = CRITICAL
 	)
@@ -332,4 +333,5 @@ func (f *Filter) Critical(arg0 interface{}, args ...interface{}) {
 		msg = fmt.Sprintf(fmt.Sprint(first)+strings.Repeat(" %v", len(args)), args...)
 	}
 	f.intLogf(lvl, msg)
+	return errors.New(msg)
 }
