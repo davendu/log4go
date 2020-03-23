@@ -341,12 +341,10 @@ func (f *Filter) Critical(arg0 interface{}, args ...interface{}) error {
 
 func (f *Filter) Crash(args ...interface{}) {
 	f.Critical(args[0], args[1:]...)
-	f.Close()
 	panic(args)
 }
 
 func (f *Filter) Exit(args ...interface{}) {
 	f.Critical(args[0], args[1:]...)
-	f.Close()
 	os.Exit(0)
 }
