@@ -340,8 +340,8 @@ func (f *Filter) Critical(arg0 interface{}, args ...interface{}) error {
 }
 
 func (f *Filter) Crash(args ...interface{}) {
-	f.Critical(args[0], args[1:]...)
-	panic(args)
+	e := f.Critical(args[0], args[1:]...)
+	panic(e)
 }
 
 func (f *Filter) Exit(args ...interface{}) {
